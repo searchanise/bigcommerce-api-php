@@ -309,7 +309,15 @@ class Connection
             throw new NetworkError(curl_error($this->curl), curl_errno($this->curl), $this->responseHeaders);
         }
 
-        $body = ($this->rawResponse) ? $this->getBody() : json_decode($this->getBody());
+        $body = $this->getBody();
+
+        if (!$this->rawResponse) {
+            $json_body = json_decode($body);
+
+            if ($json_body !== null) {
+                $body = $json_body;
+            }
+        }
 
         $status = $this->getStatus();
 
